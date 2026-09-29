@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Minecraft 2D</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,Helvetica,Arial,sans-serif;
+  background:#0a0e17;color:#e8eefc;
+  padding:8px;min-height:100vh;
+  -webkit-user-select:none;user-select:none;
+  overflow-x:hidden;font-size:14px;
+}
+#a{max-width:520px;margin:0 auto}
+.bar{
+  display:-webkit-flex;display:flex;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  -webkit-align-items:center;align-items:center;
+  gap:6px;margin-bottom:8px;
+}
+.bar h1{font-size:15px;font-weight:800;color:#7dffc4;white-space:nowrap}
+.btn{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.13);
+  color:#e8eefc;padding:7px 10px;border-radius:8px;
+  font-family:inherit;font-size:11px;font-weight:600;
+  min-height:32px;cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+}
+.btn:active{background:rgba(255,255,255,.22)}
+.hud{
+  display:-webkit-flex;display:flex;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  gap:6px;margin-bottom:6px;
+  font-size:12px;padding:6px 10px;
+  background:rgba(255,255,255,.05);
+  border-radius:8px;
+}
+.hud .hp{color:#ff5577}
+.hud .food{color:#ffcc44}
+.hud .mode-tag{
+  font-weight:800;padding:2px 8px;border-radius:6px;font-size:11px;
+}
+.mode-creative{background:#2e7d32;color:#fff}
+.mode-survival{background:#f9a825;color:#000}
+.mode-hardcore{background:#c62828;color:#fff}
+canvas{
+  display:block;margin:0 auto;
+  border-radius:10px;touch-action:none;
+  background:#87ceeb;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.panel{
+  display:-webkit-flex;display:flex;
+  gap:4px;margin-top:8px;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-justify-content:center;justify-content:center;
+}
+.blk{
+  width:40px;height:40px;border-radius:7px;
+  border:2px solid rgba(255,255,255,.15);
+  cursor:pointer;display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  font-size:18px;padding:0;position:relative;
+  -webkit-appearance:none;appearance:none;
+}
+.blk.active{border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.5)}
+.blk .cnt{
+  position:absolute;bottom:1px;right:3px;
+  font-size:9px;background:rgba(0,0,0,.7);
+  color:#fff;padding:0 3px;border-radius:4px;
+}
+.controls{
+  display:-webkit-flex;display:flex;
+  gap:6px;margin-top:8px;
+  -webkit-justify-content:center;justify-content:center;
+}
+.ctrl{
+  width:54px;height:54px;border-radius:12px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);
+  color:#e8eefc;font-size:22px;
+  cursor:pointer;-webkit-appearance:none;appearance:none;
+  -webkit-user-select:none;user-select:none;
+}
+.ctrl:active{background:rgba(255,255,255,.3)}
+
+/* МЕНЮ ВЫБОРА РЕЖИМА */
+.menu{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(6,10,20,.96);z-index:100;
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  padding:16px;
+}
+.menu-box{
+  max-width:360px;width:100%;text-align:center;
+}
+.menu-box h2{
+  font-size:22px;color:#7dffc4;margin-bottom:6px;
+  font-weight:900;
+}
+.menu-box p{color:#9fb0d4;font-size:13px;margin-bottom:18px}
+.menu-btn{
+  display:block;width:100%;padding:16px;
+  margin-bottom:10px;border-radius:12px;
+  border:2px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);
+  color:#e8eefc;font-family:inherit;font-size:15px;
+  font-weight:700;cursor:pointer;text-align:left;
+  -webkit-appearance:none;appearance:none;
+}
+.menu-btn:active{transform:scale(.97)}
+.menu-btn .em{font-size:22px;margin-right:10px}
+.menu-btn .sub{display:block;font-size:11px;color:#9fb0d4;
+  font-weight:400;margin-top:4px}
+.menu-btn.creative{border-color:#4caf50}
+.menu-btn.survival{border-color:#f9a825}
+.menu-btn.hardcore{border-color:#c62828}
+
+/* СМЕРТЬ */
+.death{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(80,0,0,.92);z-index:200;
+  display:none;-webkit-flex-direction:column;flex-direction:column;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  padding:20px;text-align:center;
+}
+.death.on{display:-webkit-flex;display:flex}
+.death h2{font-size:28px;color:#ff5577;margin-bottom:10px;font-weight:900}
+.death p{color:#ffbbbb;font-size:14px;margin-bottom:20px}
+.death .btn{font-size:14px;padding:12px 24px;margin:4px}
+</style>
+</head>
+<body>
+<div id="a">
+
+<div class="bar">
+  <a class="btn" href="index.html">← Меню</a>
+  <h1>⛏ Minecraft 2D</h1>
+  <button class="btn" onclick="resetWorld()">🔄 Мир</button>
+</div>
+
+<div class="hud">
+  <span class="hp" id="hp">❤️❤️❤️❤️❤️</span>
+  <span class="food" id="food">🍗🍗🍗🍗🍗</span>
+  <span class="mode-tag" id="modeTag">Творческий</span>
+</div>
+
+<canvas id="cv"></canvas>
+
+<div class="panel" id="panel"></div>
+
+<div class="controls">
+  <button class="ctrl" id="left">◀</button>
+  <button class="ctrl" id="up">▲</button>
+  <button class="ctrl" id="right">▶</button>
+</div>
+
+<!-- МЕНЮ РЕЖИМА -->
+<div class="menu" id="menu">
+  <div class="menu-box">
+    <h2>⛏ Minecraft 2D</h2>
+    <p>Выбери режим игры</p>
+    <button class="menu-btn creative" onclick="startGame('creative')">
+      <span class="em">🟢</span><b>Творческий</b>
+      <span class="sub">Бесконечные блоки, полёт, неуязвимость</span>
+    </button>
+    <button class="menu-btn survival" onclick="startGame('survival')">
+      <span class="em">🟡</span><b>Выживание</b>
+      <span class="sub">Здоровье, голод, зомби, урон от падения</span>
+    </button>
+    <button class="menu-btn hardcore" onclick="startGame('hardcore')">
+      <span class="em">🔴</span><b>Хардкор</b>
+      <span class="sub">Одна жизнь — умрёшь, начнёшь заново</span>
+    </button>
+  </div>
+</div>
+
+<!-- ЭКРАН СМЕРТИ -->
+<div class="death" id="death">
+  <h2>💀 Ты погиб</h2>
+  <p id="deathMsg">Игра окончена</p>
+  <button class="btn" onclick="respawn()">🔄 Возродиться</button>
+  <button class="btn" onclick="backToMenu()">🏠 В меню</button>
+</div>
+
+</div>
+
+<script>
+/* ===== НАСТРОЙКИ ===== */
+var TILE = 32;
+var COLS = 12;
+var ROWS = 16;
+var GRAVITY = 0.6;
+var JUMP = -8;
+var SPEED = 3;
+var FLY_SPEED = 4;
+
+/* Типы блоков */
+var AIR=0, GRASS=1, DIRT=2, STONE=3, WOOD=4, LEAF=5, DIAMOND=6, WATER=7, SAND=8, BRICK=9;
+
+var BLOCKS = {
+  0:{color:'#87ceeb',icon:'  ',name:'Воздух'},
+  1:{color:'#4caf50',icon:'🌱',name:'Земля'},
+  2:{color:'#8b5a2b',icon:'🟫',name:'Грязь'},
+  3:{color:'#7a7a7a',icon:'⬛',name:'Камень'},
+  4:{color:'#6b4423',icon:'🪵',name:'Дерево'},
+  5:{color:'#2e7d32',icon:'🍃',name:'Листва'},
+  6:{color:'#4dd0e1',icon:'💎',name:'Алмаз'},
+  7:{color:'#2196f3',icon:'💧',name:'Вода'},
+  8:{color:'#f4d47c',icon:'🏖',name:'Песок'},
+  9:{color:'#b34a3a',icon:'🧱',name:'Кирпич'}
+};
+
+/* ===== СОСТОЯНИЕ ===== */
+var cv = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+var W = Math.min(window.innerWidth - 20, 480);
+TILE = Math.floor(W / COLS);
+cv.width = TILE * COLS;
+cv.height = TILE * ROWS;
+
+var world;
+var player;
+var mobs = [];
+var selected = 1;
+var keys = {left:false, right:false, up:false, down:false};
+var mode = 'creative';
+var inventory = {};
+var gameOver = false;
+var running = false;
+var frameCount = 0;
+var worldTime = 0; // для дня/ночи
+
+/* ===== ГЕНЕРАЦИЯ МИРА ===== */
+function generateWorld(){
+  world = [];
+  for (var r=0; r<ROWS; r++){
+    world.push([]);
+    for (var c=0; c<COLS; c++) world[r].push(AIR);
+  }
+  var groundTop = ROWS - 4;
+  for (var c=0; c<COLS; c++){
+    var h = groundTop + Math.floor(Math.random()*2) - 1;
+    for (var r=0; r<ROWS; r++){
+      if (r < h) world[r][c] = AIR;
+      else if (r === h) world[r][c] = GRASS;
+      else if (r < h+3) world[r][c] = DIRT;
+      else world[r][c] = STONE;
+    }
+    if (Math.random() < 0.3){
+      var rr = h + 4 + Math.floor(Math.random()*2);
+      if (rr < ROWS) world[rr][c] = DIAMOND;
+    }
+  }
+  // Дерево
+  var tx = 2 + Math.floor(Math.random()*3);
+  var ty = groundTop - 1;
+  for (var r=0; r<ROWS; r++){
+    if (world[r][tx] === GRASS){ ty = r; break; }
+  }
+  for (var i=1; i<=3; i++){
+    if (ty-i >= 0) world[ty-i][tx] = WOOD;
+  }
+  for (var dr=-4; dr<=-3; dr++){
+    for (var dc=-1; dc<=1; dc++){
+      var rr2 = ty+dr, cc2 = tx+dc;
+      if (rr2>=0 && rr2<ROWS && cc2>=0 && cc2<COLS && world[rr2][cc2]===AIR)
+        world[rr2][cc2] = LEAF;
+    }
+  }
+  // Игрок
+  player = {
+    x: (COLS/2) * TILE,
+    y: (groundTop - 1) * TILE,
+    vx: 0, vy: 0, onGround: false,
+    hp: 5, food: 5, maxHp: 5, maxFood: 5,
+    fallStart: null, flying: false
+  };
+  // Мобы (только в выживании и хардкоре)
+  mobs = [];
+  if (mode !== 'creative'){
+    var mobCount = mode === 'hardcore' ? 3 : 2;
+    for (var i=0; i<mobCount; i++){
+      var mc = (i === 0) ? COLS-2 : 1 + Math.floor(Math.random()*(COLS-2));
+      mobs.push({
+        x: mc * TILE,
+        y: (groundTop - 1) * TILE,
+        vx: 0, vy: 0, onGround: false,
+        dir: Math.random() < 0.5 ? -1 : 1,
+        hp: 2,
+        timer: 0
+      });
+    }
+  }
+  // Инвентарь
+  inventory = {};
+  if (mode === 'creative'){
+    inventory = {1:999, 2:999, 3:999, 4:999, 5:999, 6:999, 7:999, 8:999, 9:999};
+  }
+  // HUD
+  updateHud();
+}
+
+/* ===== HUD ===== */
+function updateHud(){
+  var hpStr = '';
+  for (var i=0; i<player.maxHp; i++){
+    hpStr += (i < player.hp) ? '❤️' : '🖤';
+  }
+  var foodStr = '';
+  for (var j=0; j<player.maxFood; j++){
+    foodStr += (j < player.food) ? '🍗' : '⬜';
+  }
+  document.getElementById('hp').textContent = hpStr;
+  document.getElementById('food').textContent = foodStr;
+  var tag = document.getElementById('modeTag');
+  if (mode === 'creative'){ tag.textContent = '🟢 Творческий'; tag.className = 'mode-tag mode-creative'; }
+  if (mode === 'survival'){ tag.textContent = '🟡 Выживание'; tag.className = 'mode-tag mode-survival'; }
+  if (mode === 'hardcore'){ tag.textContent = '🔴 Хардкор'; tag.className = 'mode-tag mode-hardcore'; }
+}
+
+/* ===== ФИЗИКА ===== */
+function isSolid(t){ return t !== AIR && t !== WATER; }
+
+function collide(px, py, pw, ph, dx, dy){
+  // Проверяем столкновение для AABB
+  if (dx > 0){
+    var rc = Math.floor((px + pw) / TILE);
+    var tr = Math.floor(py / TILE);
+    var br = Math.floor((py + ph - 1) / TILE);
+    for (var r=tr; r<=br; r++){
+      if (rc >= 0 && rc < COLS && r >= 0 && r < ROWS && isSolid(world[r][rc]))
+        return true;
+    }
+  } else if (dx < 0){
+    var lc = Math.floor(px / TILE);
+    var tr2 = Math.floor(py / TILE);
+    var br2 = Math.floor((py + ph - 1) / TILE);
+    for (var r2=tr2; r2<=br2; r2++){
+      if (lc >= 0 && lc < COLS && r2 >= 0 && r2 < ROWS && isSolid(world[r2][lc]))
+        return true;
+    }
+  }
+  if (dy > 0){
+    var br3 = Math.floor((py + ph) / TILE);
+    var lc3 = Math.floor(px / TILE);
+    var rc3 = Math.floor((px + pw - 1) / TILE);
+    for (var c3=lc3; c3<=rc3; c3++){
+      if (br3 >= 0 && br3 < ROWS && c3 >= 0 && c3 < COLS && isSolid(world[br3][c3]))
+        return true;
+    }
+  } else if (dy < 0){
+    var tr3 = Math.floor(py / TILE);
+    var lc4 = Math.floor(px / TILE);
+    var rc4 = Math.floor((px + pw - 1) / TILE);
+    for (var c4=lc4; c4<=rc4; c4++){
+      if (tr3 >= 0 && tr3 < ROWS && c4 >= 0 && c4 < COLS && isSolid(world[tr3][c4]))
+        return true;
+    }
+  }
+  return false;
+}
+
+function updatePlayer(){
+  var pw = TILE * 0.6;
+  var ph = TILE * 0.9;
+
+  if (mode === 'creative' && player.flying){
+    // Полёт
+    if (keys.left) player.x -= FLY_SPEED;
+    if (keys.right) player.x += FLY_SPEED;
+    if (keys.up) player.y -= FLY_SPEED;
+    if (keys.down) player.y += FLY_SPEED;
+    player.vy = 0;
+  } else {
+    // Обычная физика
+    if (keys.left) player.vx = -SPEED;
+    else if (keys.right) player.vx = SPEED;
+    else player.vx *= 0.5;
+
+    if (keys.up && player.onGround){
+      player.vy = JUMP;
+      player.onGround = false;
+    }
+
+    player.vy += GRAVITY;
+    if (player.vy > 12) player.vy = 12;
+
+    // Движение по X
+    var newX = player.x + player.vx;
+    if (!collide(newX, player.y, pw, ph, player.vx, 0)){
+      player.x = newX;
+    } else {
+      player.vx = 0;
+    }
+
+    // Движение по Y
+    var oldY = player.y;
+    var newY = player.y + player.vy;
+    if (!collide(player.x, newY, pw, ph, 0, player.vy)){
+      player.y = newY;
+      player.onGround = false;
+      // Запоминаем начало падения
+      if (player.vy > 0 && player.fallStart === null){
+        player.fallStart = oldY;
+      }
+    } else {
+      if (player.vy > 0){
+        // Приземление
+        if (player.fallStart !== null && mode !== 'creative'){
+          var fell = (player.y - player.fallStart) / TILE;
+          if (fell > 3){
+            var dmg = Math.floor((fell - 3) / 2);
+            player.hp -= dmg;
+            if (player.hp < 0) player.hp = 0;
+            updateHud();
+            if (player.hp <= 0) die('Упал с высоты');
+          }
+        }
+        player.fallStart = null;
+        player.onGround = true;
+      }
+      player.vy = 0;
+    }
+  }
+
+  // Границы
+  if (player.x < 0) player.x = 0;
+  if (player.x + pw > COLS * TILE) player.x = COLS * TILE - pw;
+  if (player.y < 0) player.y = 0;
+  if (player.y + ph > ROWS * TILE){
+    player.y = ROWS * TILE - ph;
+    player.vy = 0;
+    player.onGround = true;
+  }
+}
+
+function updateMobs(){
+  var pw = TILE * 0.6;
+  var ph = TILE * 0.9;
+  for (var i=0; i<mobs.length; i++){
+    var m = mobs[i];
+    m.timer++;
+    // Движение каждые 40 кадров меняет направление
+    if (m.timer % 80 === 0 && Math.random() < 0.5){
+      m.dir *= -1;
+    }
+    // Гравитация
+    m.vy += GRAVITY;
+    if (m.vy > 12) m.vy = 12;
+
+    // X
+    var mw = pw, mh = ph;
+    var nx = m.x + m.dir * 1.2;
+    if (!collide(nx, m.y, mw, mh, m.dir, 0)){
+      m.x = nx;
+    } else {
+      m.dir *= -1;
+    }
+    // Y
+    var ny = m.y + m.vy;
+    if (!collide(m.x, ny, mw, mh, 0, m.vy)){
+      m.y = ny;
+      m.onGround = false;
+    } else {
+      if (m.vy > 0) m.onGround = true;
+      m.vy = 0;
+    }
+    // Границы
+    if (m.x < 0){ m.x = 0; m.dir = 1; }
+    if (m.x + mw > COLS*TILE){ m.x = COLS*TILE - mw; m.dir = -1; }
+
+    // Столкновение с игроком — урон
+    if (mode !== 'creative'){
+      if (Math.abs(m.x - player.x) < pw*0.8 &&
+          Math.abs(m.y - player.y) < ph*0.8){
+        if (frameCount % 60 === 0){ // раз в секунду
+          player.hp -= 1;
+          if (player.hp < 0) player.hp = 0;
+          updateHud();
+          if (player.hp <= 0) die('Зомби убил');
+        }
+      }
+    }
+  }
+}
+
+function updateTime(){
+  worldTime++;
+  // Медленное поедание еды (раз в 8 сек)
+  if (mode !== 'creative' && worldTime % 480 === 0){
+    player.food -= 1;
+    if (player.food < 0) player.food = 0;
+    if (player.food === 0){
+      // Голод — медленный урон
+      player.hp -= 1;
+      if (player.hp < 0) player.hp = 0;
+      if (player.hp <= 0) die('Умер от голода');
+    }
+    updateHud();
+  }
+}
+
+function die(reason){
+  if (gameOver) return;
+  gameOver = true;
+  running = false;
+  document.getElementById('deathMsg').textContent = reason;
+  document.getElementById('death').classList.add('on');
+}
+
+/* ===== РИСОВАНИЕ ===== */
+function getSkyColor(){
+  // День/ночь по worldTime
+  var cycle = (worldTime % 2400) / 2400;
+  // 0 = день, 0.5 = ночь, 1 = день
+  var t = Math.abs(cycle - 0.5) * 2;
+  // t=1 день, t=0 ночь
+  var dayR = 135, dayG = 206, dayB = 235;
+  var nightR = 20, nightG = 30, nightB = 60;
+  var r = Math.floor(nightR + (dayR - nightR) * t);
+  var g = Math.floor(nightG + (dayG - nightG) * t);
+  var b = Math.floor(nightB + (dayB - nightB) * t);
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+function drawBlock(r, c){
+  var t = world[r][c];
+  if (t === AIR) return;
+  var x = c * TILE, y = r * TILE;
+  var color = BLOCKS[t].color;
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, TILE, TILE);
+  ctx.fillStyle = 'rgba(0,0,0,.15)';
+  if (t === GRASS){
+    ctx.fillStyle = '#2e7d32';
+    ctx.fillRect(x, y, TILE, 4);
+  } else if (t === STONE || t === DIRT || t === SAND){
+    ctx.fillRect(x+4, y+4, 3, 3);
+    ctx.fillRect(x+TILE-8, y+6, 3, 3);
+    ctx.fillRect(x+8, y+TILE-8, 3, 3);
+  } else if (t === WOOD){
+    ctx.fillStyle = 'rgba(0,0,0,.25)';
+    ctx.fillRect(x+TILE/2-1, y, 2, TILE);
+  } else if (t === LEAF){
+    ctx.fillStyle = 'rgba(255,255,255,.1)';
+    ctx.fillRect(x+5, y+5, 4, 4);
+    ctx.fillRect(x+TILE-10, y+8, 4, 4);
+  } else if (t === DIAMOND){
+    ctx.fillStyle = '#e0ffff';
+    ctx.beginPath();
+    ctx.arc(x+TILE/2, y+TILE/2, TILE*0.25, 0, Math.PI*2);
+    ctx.fill();
+  } else if (t === WATER){
+    ctx.fillStyle = 'rgba(255,255,255,.15)';
+    ctx.fillRect(x, y+4, TILE, 2);
+    ctx.fillRect(x, y+TILE-6, TILE, 2);
+  } else if (t === BRICK){
+    ctx.fillStyle = 'rgba(0,0,0,.2)';
+    ctx.fillRect(x, y+TILE/2-1, TILE, 2);
+    ctx.fillRect(x+TILE/2-1, y, 2, TILE/2);
+    ctx.fillRect(x+TILE/4, y+TILE/2, 2, TILE/2);
+    ctx.fillRect(x+TILE*3/4, y+TILE/2, 2, TILE/2);
+  }
+  ctx.strokeStyle = 'rgba(0,0,0,.2)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x+0.5, y+0.5, TILE-1, TILE-1);
+}
+
+function drawPlayer(){
+  var pw = TILE * 0.6;
+  var ph = TILE * 0.9;
+  var x = player.x, y = player.y;
+  ctx.fillStyle = '#2c3e50';
+  ctx.fillRect(x, y, pw, ph);
+  ctx.fillStyle = '#f4c69a';
+  ctx.fillRect(x + pw*0.15, y + ph*0.05, pw*0.7, ph*0.3);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(x + pw*0.3, y + ph*0.15, 2, 2);
+  ctx.fillRect(x + pw*0.6, y + ph*0.15, 2, 2);
+}
+
+function drawMob(m){
+  var pw = TILE * 0.6;
+  var ph = TILE * 0.9;
+  var x = m.x, y = m.y;
+  ctx.fillStyle = '#4a7a3a';
+  ctx.fillRect(x, y, pw, ph);
+  ctx.fillStyle = '#2d5a1f';
+  ctx.fillRect(x + pw*0.1, y + ph*0.05, pw*0.8, ph*0.25);
+  // Глаза
+  ctx.fillStyle = '#f00';
+  ctx.fillRect(x + pw*0.25, y + ph*0.12, 2, 2);
+  ctx.fillRect(x + pw*0.6, y + ph*0.12, 2, 2);
+}
+
+function draw(){
+  ctx.fillStyle = getSkyColor();
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  // Солнце
+  var sunX = cv.width - 40;
+  var sunY = 30 + Math.sin(worldTime / 400) * 20;
+  ctx.fillStyle = '#fff8b0';
+  ctx.beginPath();
+  ctx.arc(sunX, sunY, 12, 0, Math.PI*2);
+  ctx.fill();
+  // Блоки
+  for (var r=0; r<ROWS; r++){
+    for (var c=0; c<COLS; c++){
+      if (world[r][c] !== AIR) drawBlock(r, c);
+    }
+  }
+  // Мобы
+  for (var i=0; i<mobs.length; i++) drawMob(mobs[i]);
+  // Игрок
+  drawPlayer();
+}
+
+/* ===== ЦИКЛ ===== */
+function loop(){
+  if (!running) return;
+  frameCount++;
+  updatePlayer();
+  updateMobs();
+  updateTime();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+/* ===== УПРАВЛЕНИЕ ===== */
+function bindHold(el, key){
+  var start = function(e){ e.preventDefault(); keys[key] = true; };
+  var stop = function(e){ keys[key] = false; };
+  el.addEventListener('touchstart', start, {passive:false});
+  el.addEventListener('touchend', stop, {passive:false});
+  el.addEventListener('touchcancel', stop, {passive:false});
+  el.addEventListener('mousedown', start);
+  el.addEventListener('mouseup', stop);
+  el.addEventListener('mouseleave', stop);
+}
+bindHold(document.getElementById('left'), 'left');
+bindHold(document.getElementById('right'), 'right');
+bindHold(document.getElementById('up'), 'up');
+
+document.addEventListener('keydown', function(e){
+  var k = e.key.toLowerCase();
+  if (k === 'arrowleft' || k === 'a'){ e.preventDefault(); keys.left = true; }
+  if (k === 'arrowright' || k === 'd'){ e.preventDefault(); keys.right = true; }
+  if (k === 'arrowup' || k === 'w' || k === ' '){ e.preventDefault(); keys.up = true; }
+  if (k === 'arrowdown' || k === 's'){ e.preventDefault(); keys.down = true; }
+  if (k === 'f' && mode === 'creative'){
+    player.flying = !player.flying;
+    if (player.flying) player.vy = 0;
+  }
+});
+document.addEventListener('keyup', function(e){
+  var k = e.key.toLowerCase();
+  if (k === 'arrowleft' || k === 'a') keys.left = false;
+  if (k === 'arrowright' || k === 'd') keys.right = false;
+  if (k === 'arrowup' || k === 'w' || k === ' ') keys.up = false;
+  if (k === 'arrowdown' || k === 's') keys.down = false;
+});
+
+/* ===== КОПАТЬ / СТАВИТЬ ===== */
+cv.addEventListener('click', function(e){ handleTap(e.clientX, e.clientY); });
+cv.addEventListener('touchend', function(e){
+  e.preventDefault();
+  var t = e.changedTouches[0];
+  handleTap(t.clientX, t.clientY);
+}, {passive:false});
+
+function handleTap(clientX, clientY){
+  if (gameOver) return;
+  var r = cv.getBoundingClientRect();
+  var x = clientX - r.left;
+  var y = clientY - r.top;
+  var c = Math.floor(x / TILE);
+  var row = Math.floor(y / TILE);
+  if (c < 0 || c >= COLS || row < 0 || row >= ROWS) return;
+  var blockX = c * TILE;
+  var blockY = row * TILE;
+  var pw = TILE * 0.6;
+  var ph = TILE * 0.9;
+  var dist = Math.abs(blockX - player.x) + Math.abs(blockY - player.y);
+  var nearby = dist < TILE * 2.5;
+  if (!nearby) return;
+
+  if (world[row][c] !== AIR){
+    // КОПАТЬ
+    var t = world[row][c];
+    if (mode === 'creative' || inventory[t] !== undefined){
+      world[row][c] = AIR;
+      if (mode !== 'creative'){
+        inventory[t] = (inventory[t] || 0) + 1;
+        renderPanel();
+      }
+    } else {
+      world[row][c] = AIR;
+      if (mode !== 'creative'){
+        inventory[t] = (inventory[t] || 0) + 1;
+        renderPanel();
+      }
+    }
+  } else {
+    // СТАВИТЬ
+    if (mode === 'creative'){
+      if (selected !== AIR){
+        var overlapX = (blockX + TILE > player.x) && (blockX < player.x + pw);
+        var overlapY = (blockY + TILE > player.y) && (blockY < player.y + ph);
+        if (!(overlapX && overlapY)) world[row][c] = selected;
+      }
+    } else {
+      if (selected !== AIR && inventory[selected] > 0){
+        var overlapX2 = (blockX + TILE > player.x) && (blockX < player.x + pw);
+        var overlapY2 = (blockY + TILE > player.y) && (blockY < player.y + ph);
+        if (!(overlapX2 && overlapY2)){
+          world[row][c] = selected;
+          inventory[selected]--;
+          if (inventory[selected] <= 0) delete inventory[selected];
+          renderPanel();
+        }
+      }
+    }
+  }
+}
+
+/* ===== ПАНЕЛЬ ===== */
+function renderPanel(){
+  var el = document.getElementById('panel');
+  el.innerHTML = '';
+  var order = [1,2,3,4,5,6,7,8,9];
+  order.forEach(function(type){
+    var count = inventory[type] || 0;
+    if (mode !== 'creative' && count === 0) return;
+    var b = document.createElement('button');
+    b.className = 'blk' + (type === selected ? ' active' : '');
+    b.style.background = BLOCKS[type].color;
+    b.textContent = BLOCKS[type].icon;
+    if (mode !== 'creative'){
+      var cnt = document.createElement('span');
+      cnt.className = 'cnt';
+      cnt.textContent = count;
+      b.appendChild(cnt);
+    }
+    b.onclick = function(){
+      selected = type;
+      renderPanel();
+    };
+    el.appendChild(b);
+  });
+}
+
+/* ===== СТАРТ / РЕСПАВН ===== */
+function startGame(m){
+  mode = m;
+  document.getElementById('menu').classList.remove('on');
+  document.getElementById('menu').style.display = 'none';
+  resetWorld();
+  gameOver = false;
+  running = true;
+  loop();
+}
+function resetWorld(){
+  generateWorld();
+  renderPanel();
+  gameOver = false;
+  running = true;
+  loop();
+}
+function respawn(){
+  if (mode === 'hardcore'){
+    // Хардкор — начинаем полностью заново
+    startGame('hardcore');
+    return;
+  }
+  document.getElementById('death').classList.remove('on');
+  player.hp = player.maxHp;
+  player.food = player.maxFood;
+  player.x = (COLS/2) * TILE;
+  player.y = (ROWS - 6) * TILE;
+  player.vx = 0; player.vy = 0;
+  updateHud();
+  gameOver = false;
+  running = true;
+  loop();
+}
+function backToMenu(){
+  document.getElementById('death').classList.remove('on');
+  document.getElementById('menu').style.display = 'flex';
+  document.getElementById('menu').classList.add('on');
+  running = false;
+}
+
+/* СТАРТ — показать меню */
+document.getElementById('menu').classList.add('on');
+</script>
+</body>
+</html>
