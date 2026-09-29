@@ -1,0 +1,28 @@
+<div class="notes-section" style="max-width:520px;margin:20px auto;padding:0 12px">
+  <div class="notes-header">
+    <h2>📌 Заметки от админа</h2>
+    <button class="notes-lock" id="notesLock">🔒</button>
+  </div>
+  <div id="notesList"></div>
+</div>
+
+<div class="notes-modal" id="notesModal">
+  <div class="notes-modal-box">
+    <h3>🔐 Заметки админа</h3>
+    <div id="notesPwdArea">
+      <input type="password" id="notesPwd" placeholder="Пароль" autocomplete="off">
+      <button class="notes-btn" id="notesLoginBtn" style="width:100%">Войти</button>
+    </div>
+    <div id="notesAdminArea" style="display:none">
+      <label class="notes-label">Заголовок</label>
+      <input type="text" id="noteTitleInput" placeholder="Например: Новость">
+      <label class="notes-label">Текст заметки</label>
+      <textarea id="noteTextInput" placeholder="Текст..."></textarea>
+      <div class="notes-modal-btns">
+        <button class="notes-btn" id="notesAddBtn" style="width:100%">➕ Добавить</button>
+      </div>
+    </div>
+    <div class="notes-msg" id="notesMsg"></div>
+    <div class="notes-modal-btns"><button class="notes-btn" id="notesCloseBtn" style="width:100%">Закрыть</button></div>
+  </div>
+</div>
