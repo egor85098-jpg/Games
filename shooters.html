@@ -9,50 +9,56 @@
 <link rel="stylesheet" href="notes.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-gradient(circle at 20% 10%,#2a1b1b,#0a0e17 70%);background-attachment:fixed;color:#e8eefc;padding:12px 10px 30px;min-height:100vh;-webkit-user-select:none;user-select:none;overflow-x:hidden;font-size:14px}
+body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-gradient(circle at 20% 10%,#2a1b1b,#0a0e17 70%);background-attachment:fixed;color:#e8eefc;padding:12px 10px 40px;min-height:100vh;-webkit-user-select:none;user-select:none;overflow-x:hidden;font-size:14px}
 #a{max-width:520px;margin:0 auto}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
 .topbar h1{font-size:18px;font-weight:800;color:#ff8fa8}
-.menu{display:grid;grid-template-columns:1fr;gap:12px}
-.card{display:flex;align-items:center;gap:14px;padding:20px 16px;border:1px solid rgba(255,143,168,.25);border-radius:16px;background:linear-gradient(160deg,rgba(255,80,80,.08),rgba(255,255,255,.02));color:#e8eefc;font-family:inherit;text-decoration:none;position:relative;overflow:hidden}
-.card:active{transform:scale(.97)}
+.btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:#e8eefc;padding:8px 12px;border-radius:9px;font-family:inherit;font-size:12px;font-weight:600;min-height:34px;cursor:pointer;-webkit-appearance:none;appearance:none;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn:active{background:rgba(255,255,255,.22)}
+
+/* МЕНЮ */
+.menu{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:20px}
+.card{display:flex;align-items:center;gap:14px;padding:18px 16px;border:1px solid rgba(255,143,168,.25);border-radius:16px;background:linear-gradient(160deg,rgba(255,80,80,.08),rgba(255,255,255,.02));color:#e8eefc;font-family:inherit;text-decoration:none;position:relative;overflow:hidden;-webkit-appearance:none;appearance:none;cursor:pointer}
+.card:active{transform:scale(.97);border-color:#ff8fa8}
 .card .ico{font-size:38px;flex-shrink:0}
 .card .txt{flex:1;text-align:left}
 .card .name{font-size:16px;font-weight:800;display:block;color:#ff8fa8}
 .card .desc{font-size:11px;color:#8b9ac0;display:block;margin-top:3px}
+.card .arrow{color:#6ea8ff;font-size:20px;flex-shrink:0}
+.card.soon{opacity:.6;cursor:default}
 .badge{background:#f9a825;color:#000;font-size:10px;font-weight:900;padding:3px 9px;border-radius:9px;letter-spacing:.5px}
-.info{text-align:center;color:#9fb0d4;font-size:12px;line-height:1.6;margin-top:20px;padding:14px;background:rgba(255,255,255,.03);border-radius:12px;border:1px dashed rgba(255,255,255,.1)}
 </style>
 </head>
 <body>
 <div id="a">
 
 <div class="topbar">
-  <a class="btn" href="index.html" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:#e8eefc;padding:8px 12px;border-radius:9px;text-decoration:none;font-size:12px;font-weight:600">← Главная</a>
+  <a class="btn" href="index.html">← Главная</a>
   <h1>🔫 Стрелялки</h1>
+  <span style="width:60px"></span>
 </div>
 
 <div class="menu">
-  <div class="card">
+  <a class="card" href="cs2d.html">
     <span class="ico">💣</span>
-    <span class="txt"><span class="name">CS 2D</span><span class="desc">Стрелялка вид сверху</span></span>
-    <span class="badge">СКОРО</span>
-  </div>
-  <div class="card">
+    <span class="txt">
+      <span class="name">Strike 2D (CS)</span>
+      <span class="desc">Стрелялка вид сверху • 3 оружия • рейтинг</span>
+    </span>
+    <span class="arrow">▶</span>
+  </a>
+  <div class="card soon">
     <span class="ico">🔫</span>
-    <span class="txt"><span class="name">Standoff 2D</span><span class="desc">Командный бой</span></span>
+    <span class="txt">
+      <span class="name">Standoff 2D</span>
+      <span class="desc">Командный бой 5v5</span>
+    </span>
     <span class="badge">СКОРО</span>
   </div>
-</div>
-
-<div class="info">
-  🚧 Раздел в разработке.<br>
-  Скоро тут появятся стрелялки!<br>
-  Подписывайся: <a href="https://t.me/lolkek_tgk" style="color:#6ea8ff">@lolkek_tgk</a>
 </div>
 
 <!-- ЗАМЕТКИ -->
-<div class="notes-section" style="margin-top:24px">
+<div class="notes-section">
   <div class="notes-header">
     <h2>📌 Заметки от админа</h2>
     <button class="notes-lock" id="notesLock">🔒</button>
@@ -62,6 +68,7 @@ body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-grad
 
 </div>
 
+<!-- МОДАЛКА ЗАМЕТОК -->
 <div class="notes-modal" id="notesModal">
   <div class="notes-modal-box">
     <h3>🔐 Заметки админа</h3>
@@ -71,8 +78,8 @@ body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-grad
     </div>
     <div id="notesAdminArea" style="display:none">
       <label class="notes-label">Заголовок</label>
-      <input type="text" id="noteTitleInput" placeholder="Заголовок">
-      <label class="notes-label">Текст</label>
+      <input type="text" id="noteTitleInput" placeholder="Например: Новость">
+      <label class="notes-label">Текст заметки</label>
       <textarea id="noteTextInput" placeholder="Текст..."></textarea>
       <div class="notes-modal-btns"><button class="notes-btn" id="notesAddBtn" style="width:100%">➕ Добавить</button></div>
     </div>
