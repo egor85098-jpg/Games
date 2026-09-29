@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0e17">
+<title>Сайт lolkek</title>
+<link rel="stylesheet" href="notes.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,Helvetica,Arial,sans-serif;
+  background:radial-gradient(circle at 20% 10%,#1b2a4a,#0a0e17 70%);
+  background-attachment:fixed;
+  color:#e8eefc;padding:14px 12px 40px;min-height:100vh;
+  -webkit-user-select:none;user-select:none;overflow-x:hidden;font-size:14px;
+}
+#a{max-width:520px;margin:0 auto}
+.hero{text-align:center;padding:6px 0 16px}
+.hero h1{
+  font-size:28px;font-weight:900;letter-spacing:-1px;
+  background:linear-gradient(90deg,#7dffc4,#6ea8ff,#c78bff);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:#7dffc4;
+}
+.hero .sub{color:#9fb0d4;font-size:12px;line-height:1.5;margin-top:8px}
+.hero .tg{
+  display:inline-block;margin-top:12px;padding:8px 16px;
+  border-radius:18px;background:rgba(0,136,204,.2);
+  border:1px solid rgba(110,168,255,.4);
+  color:#6ea8ff;font-weight:700;font-size:12px;text-decoration:none;
+}
+.section-title{
+  font-size:14px;font-weight:800;color:#7dffc4;
+  margin:22px 0 10px;letter-spacing:.5px;
+}
+.poll{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:12px;padding:14px;margin-bottom:12px;
+}
+.poll-q{font-size:13px;font-weight:700;margin-bottom:10px}
+.poll-opt{
+  display:block;width:100%;padding:11px 14px;margin-bottom:7px;
+  border-radius:9px;border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.05);
+  color:#e8eefc;font-family:inherit;font-size:13px;
+  text-align:left;cursor:pointer;position:relative;
+  -webkit-appearance:none;appearance:none;overflow:hidden;
+}
+.poll-opt:active{background:rgba(255,255,255,.14)}
+.poll-opt:disabled{opacity:.95;cursor:default}
+.poll-opt .fill{
+  position:absolute;top:0;left:0;bottom:0;
+  background:rgba(110,168,255,.25);transition:width .3s ease;z-index:0;
+}
+.poll-opt .label{position:relative;z-index:1}
+.poll-opt .count{
+  position:relative;z-index:1;float:right;color:#9fb0d4;font-size:12px;
+}
+.poll-opt.voted{border-color:#6ea8ff;background:rgba(110,168,255,.15)}
+.poll-opt.voted .count{color:#7dffc4;font-weight:700}
+.poll-info{font-size:11px;color:#8b9ac0;margin-top:6px;text-align:right}
+.m{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.c{
+  display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;
+  -webkit-align-items:center;align-items:center;
+  padding:16px 8px;border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;background:rgba(255,255,255,.05);
+  color:#e8eefc;font-family:inherit;font-size:13px;
+  font-weight:700;cursor:pointer;text-decoration:none;
+  position:relative;overflow:hidden;
+  -webkit-appearance:none;appearance:none;transition:.15s;
+}
+.c:active{transform:scale(.96)}
+.c .ico{font-size:30px;line-height:1;margin-bottom:6px}
+.c .name{font-size:13px;text-align:center}
+.c .desc{font-size:10px;color:#8b9ac0;text-align:center;margin-top:3px}
+.c.soon{opacity:.65}
+.c .badge{
+  position:absolute;top:8px;right:8px;
+  background:#f9a825;color:#000;
+  font-size:9px;font-weight:900;
+  padding:2px 7px;border-radius:8px;
+}
+.footer{
+  text-align:center;margin-top:30px;padding-top:20px;
+  border-top:1px solid rgba(255,255,255,.07);
+  color:#5d6a86;font-size:11px;line-height:1.7;
+}
+.footer a{color:#6ea8ff;text-decoration:none}
+</style>
+</head>
+<body>
+<div id="a">
+
+<header class="hero">
+  <h1>Сайт lolkek</h1>
+  <p class="sub">Играй на информатике и переменах!</p>
+  <a class="tg" href="https://t.me/lolkek_tgk" target="_blank" rel="noopener">✈️ @lolkek_tgk</a>
+</header>
+
+<!-- ЗАМЕТКИ -->
+<div class="notes-section">
+  <div class="notes-header">
+    <h2>📌 Заметки от админа</h2>
+    <button class="notes-lock" id="notesLock" title="Редактор">🔒</button>
+  </div>
+  <div id="notesList"></div>
+</div>
+
+<!-- ОПРОСЫ -->
+<div class="section-title">📊 Опросы</div>
+<div id="polls"></div>
+
+<!-- ИГРЫ -->
+<div class="section-title">🎮 Игры</div>
+<div class="m">
+  <a class="c" href="minecraft.html">
+    <span class="ico">⛏</span>
+    <span class="name">Minecraft 2D</span>
+    <span class="desc">Три режима</span>
+  </a>
+  <div class="c soon">
+    <span class="badge">СКОРО</span>
+    <span class="ico">🔫</span>
+    <span class="name">Standoff 2D</span>
+    <span class="desc">Скоро</span>
+  </div>
+  <div class="c soon">
+    <span class="badge">СКОРО</span>
+    <span class="ico">💣</span>
+    <span class="name">CS 2D</span>
+    <span class="desc">Скоро</span>
+  </div>
+  <div class="c soon">
+    <span class="badge">СКОРО</span>
+    <span class="ico">🎯</span>
+    <span class="name">Тир</span>
+    <span class="desc">Скоро</span>
+  </div>
+</div>
+
+<div class="footer">
+  Сделано для школы и уроков информатики 🎓<br>
+  <a href="https://t.me/lolkek_tgk">@lolkek_tgk</a>
+</div>
+
+</div>
+
+<!-- МОДАЛКА ЗАМЕТОК -->
+<div class="notes-modal" id="notesModal">
+  <div class="notes-modal-box">
+    <h3>🔐 Заметки админа</h3>
+
+    <div id="notesPwdArea">
+      <input type="password" id="notesPwd" placeholder="Пароль" autocomplete="off">
+      <button class="notes-btn" id="notesLoginBtn" style="width:100%">Войти</button>
+    </div>
+
+    <div id="notesAdminArea" style="display:none">
+      <label class="notes-label">Заголовок</label>
+      <input type="text" id="noteTitleInput" placeholder="Например: Новость">
+      <label class="notes-label">Текст заметки</label>
+      <textarea id="noteTextInput" placeholder="Текст..."></textarea>
+      <div class="notes-modal-btns">
+        <button class="notes-btn" id="notesAddBtn">➕ Добавить</button>
+        <button class="notes-btn" id="notesCopyBtn">📋 Код для GitHub</button>
+      </div>
+    </div>
+
+    <div class="notes-msg" id="notesMsg"></div>
+
+    <div class="notes-modal-btns">
+      <button class="notes-btn" id="notesCloseBtn">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script src="notes.js"></script>
+<script>
+/* ===== ОПРОСЫ ===== */
+var VOTES_KEY = 'lolkek_votes_v1';
+var MY_VOTES_KEY = 'lolkek_my_votes_v1';
+var POLLS = [
+  {id:'p1', q:'Какая игра тебе больше нравится?',
+    options:['Minecraft 2D','Змейка','2048','Пинг-понг','Мемори','Paint']},
+  {id:'p2', q:'Какую игру добавить следующей?',
+    options:['Standoff 2D','CS 2D','Тир','Гонки','Тетрис','Флэппи']},
+  {id:'p3', q:'Ты играешь на сайте...',
+    options:['На информатике','На перемене','Дома','На другом уроке']},
+  {id:'p4', q:'Какой режим Minecraft зашёл?',
+    options:['🟢 Творческий','🟡 Выживание','🔴 Хардкор','Ещё не пробовал']}
+];
+function loadVotes(){ try { var s=localStorage.getItem(VOTES_KEY); return s?JSON.parse(s):{}; } catch(e){return {}} }
+function saveVotes(v){ try { localStorage.setItem(VOTES_KEY, JSON.stringify(v)); } catch(e){} }
+function loadMyVotes(){ try { var s=localStorage.getItem(MY_VOTES_KEY); return s?JSON.parse(s):{}; } catch(e){return {}} }
+function saveMyVotes(v){ try { localStorage.setItem(MY_VOTES_KEY, JSON.stringify(v)); } catch(e){} }
+function renderPolls(){
+  var votes = loadVotes();
+  var myVotes = loadMyVotes();
+  var el = document.getElementById('polls');
+  el.innerHTML = '';
+  POLLS.forEach(function(poll){
+    var total = 0;
+    var counts = poll.options.map(function(_, i){
+      var c = votes[poll.id+'_'+i] || 0;
+      total += c; return c;
+    });
+    var myChoice = myVotes[poll.id];
+    var box = document.createElement('div'); box.className = 'poll';
+    var q = document.createElement('div'); q.className='poll-q'; q.textContent = poll.q;
+    box.appendChild(q);
+    poll.options.forEach(function(opt, i){
+      var key = poll.id+'_'+i;
+      var count = counts[i];
+      var pct = total > 0 ? Math.round(count/total*100) : 0;
+      var btn = document.createElement('button');
+      btn.className = 'poll-opt' + (myChoice === i ? ' voted' : '');
+      btn.disabled = (myChoice !== undefined);
+      var fill = document.createElement('div'); fill.className='fill';
+      fill.style.width = (myChoice !== undefined ? pct : 0) + '%';
+      btn.appendChild(fill);
+      var label = document.createElement('span'); label.className='label';
+      label.textContent = opt; btn.appendChild(label);
+      if (myChoice !== undefined){
+        var cnt = document.createElement('span'); cnt.className='count';
+        cnt.textContent = pct + '% (' + count + ')';
+        btn.appendChild(cnt);
+      }
+      btn.onclick = function(){
+        if (myChoice !== undefined) return;
+        votes[key] = (votes[key] || 0) + 1;
+        saveVotes(votes);
+        myVotes[poll.id] = i;
+        saveMyVotes(myVotes);
+        renderPolls();
+      };
+      box.appendChild(btn);
+    });
+    var info = document.createElement('div'); info.className='poll-info';
+    info.textContent = 'Всего голосов: ' + total;
+    box.appendChild(info);
+    el.appendChild(box);
+  });
+}
+renderPolls();
+</script>
+</body>
+</html>
