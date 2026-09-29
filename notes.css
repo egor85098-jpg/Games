@@ -1,202 +1,22 @@
-/* =====================================================
-   NOTES.CSS — стили блока заметок
-   ===================================================== */
-
-.notes-section{
-  margin: 14px 0 20px;
-}
-
-.notes-header{
-  display: -webkit-flex;
-  display: flex;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  -webkit-align-items: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.notes-header h2{
-  font-size: 14px;
-  font-weight: 800;
-  color: #7dffc4;
-  letter-spacing: .5px;
-}
-
-.notes-lock{
-  background: none;
-  border: none;
-  color: #ffd479;
-  font-size: 18px;
-  padding: 4px 8px;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.notes-empty{
-  text-align: center;
-  color: #5d6a86;
-  font-size: 13px;
-  padding: 20px 10px;
-  background: rgba(255,255,255,.03);
-  border: 1px dashed rgba(255,255,255,.1);
-  border-radius: 12px;
-}
-
-.note-card{
-  background: linear-gradient(135deg, rgba(255,212,121,.08), rgba(255,212,121,.02));
-  border: 1px solid rgba(255,212,121,.25);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 10px;
-  color: #ffe8b0;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.note-head{
-  display: -webkit-flex;
-  display: flex;
-  -webkit-justify-content: space-between;
-  justify-content: space-between;
-  -webkit-align-items: flex-start;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-
-.note-title{
-  font-weight: 800;
-  color: #ffd479;
-  font-size: 13px;
-  word-break: break-word;
-}
-
-.note-del{
-  background: rgba(255,80,80,.15);
-  border: 1px solid rgba(255,80,80,.3);
-  color: #ff8080;
-  border-radius: 6px;
-  font-size: 12px;
-  padding: 2px 6px;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  flex-shrink: 0;
-}
-.note-del:active{ background: rgba(255,80,80,.35); }
-
-.note-text{
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  color: #ffe8b0;
-}
-
-.note-date{
-  margin-top: 6px;
-  font-size: 10px;
-  color: #b39c6a;
-  text-align: right;
-}
-
-/* МОДАЛКА */
-.notes-modal{
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,.85);
-  z-index: 1000;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  padding: 16px;
-}
-.notes-modal.on{
-  display: -webkit-flex;
-  display: flex;
-}
-
-.notes-modal-box{
-  background: #141d33;
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: 14px;
-  padding: 16px;
-  width: 100%;
-  max-width: 420px;
-  max-height: 90vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.notes-modal-box h3{
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #7dffc4;
-}
-
-.notes-modal-box input,
-.notes-modal-box textarea{
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 8px;
-  background: #0a0e17;
-  color: #e8eefc;
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: 9px;
-  font-family: inherit;
-  font-size: 13px;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.notes-modal-box textarea{
-  min-height: 100px;
-  line-height: 1.5;
-  resize: vertical;
-}
-
-.notes-modal-btns{
-  display: -webkit-flex;
-  display: flex;
-  gap: 6px;
-  margin-top: 8px;
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-}
-
-.notes-btn{
-  -webkit-flex: 1;
-  flex: 1;
-  min-width: 100px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.13);
-  color: #e8eefc;
-  padding: 10px 12px;
-  border-radius: 9px;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  min-height: 38px;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-}
-.notes-btn:active{ background: rgba(255,255,255,.22); }
-
-.notes-msg{
-  font-size: 11px;
-  color: #8b9ac0;
-  margin-top: 8px;
-  line-height: 1.5;
-  min-height: 16px;
-}
-
-.notes-label{
-  display: block;
-  font-size: 11px;
-  color: #9fb0d4;
-  margin-bottom: 4px;
-  margin-top: 4px;
-}
+.notes-section{margin:12px 0 16px}
+.notes-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.notes-header h2{font-size:14px;font-weight:800;color:#7dffc4}
+.notes-lock{background:none;border:none;color:#ffd479;font-size:18px;padding:4px 8px;cursor:pointer;-webkit-appearance:none;appearance:none}
+.notes-empty{text-align:center;color:#5d6a86;font-size:13px;padding:16px 10px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.1);border-radius:12px}
+.note-card{background:linear-gradient(135deg,rgba(255,212,121,.08),rgba(255,212,121,.02));border:1px solid rgba(255,212,121,.25);border-radius:12px;padding:12px 14px;margin-bottom:10px;color:#ffe8b0;font-size:13px;line-height:1.5}
+.note-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+.note-title{font-weight:800;color:#ffd479;font-size:13px;word-break:break-word}
+.note-del{background:rgba(255,80,80,.15);border:1px solid rgba(255,80,80,.3);color:#ff8080;border-radius:6px;font-size:12px;padding:2px 6px;cursor:pointer;flex-shrink:0}
+.note-text{white-space:pre-wrap;word-wrap:break-word}
+.note-date{margin-top:6px;font-size:10px;color:#b39c6a;text-align:right}
+.notes-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.notes-modal.on{display:flex}
+.notes-modal-box{background:#141d33;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:16px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.notes-modal-box h3{font-size:16px;margin-bottom:10px;color:#7dffc4}
+.notes-modal-box input,.notes-modal-box textarea{width:100%;padding:10px;margin-bottom:8px;background:#0a0e17;color:#e8eefc;border:1px solid rgba(255,255,255,.15);border-radius:9px;font-family:inherit;font-size:13px;-webkit-appearance:none;appearance:none}
+.notes-modal-box textarea{min-height:100px;line-height:1.5;resize:vertical}
+.notes-modal-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.notes-btn{flex:1;min-width:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:#e8eefc;padding:10px 12px;border-radius:9px;font-family:inherit;font-size:12px;font-weight:600;min-height:38px;cursor:pointer;-webkit-appearance:none;appearance:none}
+.notes-btn:active{background:rgba(255,255,255,.22)}
+.notes-msg{font-size:11px;color:#8b9ac0;margin-top:8px;line-height:1.5;min-height:16px}
+.notes-label{display:block;font-size:11px;color:#9fb0d4;margin-bottom:4px;margin-top:4px}
