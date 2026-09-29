@@ -1,5 +1,771 @@
-<a class="card" href="cs2d.html">
-  <span class="ico">💣</span>
-  <span class="txt"><span class="name">CS 2D</span><span class="desc">Стрелялка вид сверху</span></span>
-  <span style="color:#6ea8ff;font-size:18px">▶</span>
-</a>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0e17">
+<title>Strike 2D — Сайт lolkek</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:#0a0e17;color:#e8eefc;padding:8px;min-height:100vh;-webkit-user-select:none;user-select:none;overflow:hidden;font-size:14px}
+#a{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:6px;height:100vh}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-shrink:0}
+.topbar h1{font-size:15px;font-weight:800;color:#7dffc4}
+.btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:#e8eefc;padding:7px 11px;border-radius:8px;font-family:inherit;font-size:11px;font-weight:600;min-height:32px;cursor:pointer;-webkit-appearance:none;appearance:none;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn:active{background:rgba(255,255,255,.22)}
+
+/* HP BAR СВЕРХУ */
+.hp-bar{height:14px;background:rgba(255,255,255,.08);border-radius:7px;overflow:hidden;flex-shrink:0;position:relative}
+.hp-fill{height:100%;background:linear-gradient(90deg,#ff5577,#ff8fa8);transition:width .2s;width:100%}
+.hp-text{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;text-shadow:0 1px 2px #000}
+.hud{display:flex;gap:6px;font-size:11px;padding:5px 8px;background:rgba(255,255,255,.05);border-radius:7px;flex-shrink:0;justify-content:space-between}
+.hud span{white-space:nowrap}
+.hud .kills{color:#7dffc4}
+.hud .wave{color:#ffd479}
+.hud .timer{color:#6ea8ff}
+.hud .ammo{color:#fff;font-weight:700}
+
+.game{position:relative;flex:1;min-height:0}
+canvas{display:block;width:100%;height:100%;border-radius:10px;touch-action:none;background:#2d4a2d}
+
+/* ОРУЖИЕ */
+.weapons{display:flex;gap:6px;justify-content:center;flex-shrink:0}
+.wpn{flex:1;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.13);border-radius:9px;padding:8px 4px;text-align:center;cursor:pointer;-webkit-appearance:none;appearance:none;color:#e8eefc;font-family:inherit}
+.wpn.active{border-color:#7dffc4;background:rgba(125,255,196,.15)}
+.wpn .em{font-size:18px;display:block;line-height:1}
+.wpn .nm{font-size:10px;font-weight:700;display:block;margin-top:3px}
+.wpn .am{font-size:9px;color:#9fb0d4;display:block;margin-top:1px}
+
+/* ЭКРАНЫ */
+.screen{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(6,10,20,.95);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;border-radius:10px;overflow-y:auto}
+.screen.on{display:flex}
+.screen h2{font-size:24px;color:#7dffc4;margin-bottom:8px;font-weight:900}
+.screen p{color:#9fb0d4;font-size:13px;margin-bottom:16px;line-height:1.5}
+.screen .btn{font-size:14px;padding:12px 24px;margin:4px;min-height:auto}
+.screen .btn.primary{background:rgba(125,255,196,.25);border-color:#7dffc4;color:#fff}
+
+/* РЕЙТИНГ */
+.rating{width:100%;max-width:340px;margin-bottom:14px}
+.rating h3{font-size:13px;color:#ffd479;margin-bottom:8px;text-align:center}
+.rating-row{display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,.04);border-radius:7px;margin-bottom:4px;font-size:12px}
+.rating-row .rank{color:#ffd479;font-weight:800;min-width:26px}
+.rating-row .name{flex:1;text-align:left;margin-left:8px;color:#e8eefc}
+.rating-row .score{color:#7dffc4;font-weight:700}
+.rating-empty{color:#5d6a86;font-size:11px;text-align:center;padding:10px}
+
+/* Полоска подсказки */
+.tip{text-align:center;font-size:10px;color:#5d6a86;flex-shrink:0;padding:2px}
+</style>
+</head>
+<body>
+<div id="a">
+
+<div class="topbar">
+  <a class="btn" href="index.html">← Главная</a>
+  <h1>💣 Strike 2D</h1>
+  <button class="btn" onclick="restartGame()">🔄</button>
+</div>
+
+<div class="hp-bar">
+  <div class="hp-fill" id="hpFill"></div>
+  <div class="hp-text" id="hpText">100 / 100</div>
+</div>
+
+<div class="hud">
+  <span class="kills">💀 <b id="killsText">0</b></span>
+  <span class="wave">🌊 <b id="waveText">1</b></span>
+  <span class="timer">⏱ <b id="timerText">0:00</b></span>
+</div>
+
+<div class="game">
+  <canvas id="cv"></canvas>
+
+  <div class="screen on" id="startScreen">
+    <h2>💣 Strike 2D</h2>
+    <p>Тапни по экрану — персонаж пойдёт туда<br>и будет <b>автоматически стрелять</b> по врагам.<br>Переключай оружие внизу. Собирай бонусы!</p>
+    <div class="rating">
+      <h3>🏆 Локальный рейтинг</h3>
+      <div id="ratingList"></div>
+    </div>
+    <button class="btn primary" onclick="startGame()">▶ Начать</button>
+    <button class="btn" onclick="clearRating()">🗑 Очистить рейтинг</button>
+  </div>
+
+  <div class="screen" id="deadScreen">
+    <h2>💀 Ты погиб</h2>
+    <p id="deadMsg">Убито врагов: 0</p>
+    <div class="rating">
+      <h3>🏆 Локальный рейтинг</h3>
+      <div id="ratingList2"></div>
+    </div>
+    <button class="btn primary" onclick="restartGame()">🔄 Заново</button>
+    <button class="btn" onclick="location.href='index.html'">🏠 На главную</button>
+  </div>
+</div>
+
+<div class="weapons" id="weapons">
+  <button class="wpn active" data-wpn="pistol">
+    <span class="em">🔫</span>
+    <span class="nm">Пистолет</span>
+    <span class="am" id="amPistol">∞ / ∞</span>
+  </button>
+  <button class="wpn" data-wpn="rifle">
+    <span class="em">🎯</span>
+    <span class="nm">Автомат</span>
+    <span class="am" id="amRifle">30 / 30</span>
+  </button>
+  <button class="wpn" data-wpn="shotgun">
+    <span class="em">💥</span>
+    <span class="nm">Дробовик</span>
+    <span class="am" id="amShotgun">8 / 8</span>
+  </button>
+</div>
+
+<div class="tip">Тап — идти и стрелять • Кнопки — оружие</div>
+
+</div>
+
+<script>
+/* =========================================================
+   ЗВУКИ (Web Audio API — без файлов)
+   ========================================================= */
+var audioCtx=null;
+function initAudio(){
+  if(audioCtx)return;
+  try{
+    var AC=window.AudioContext||window.webkitAudioContext;
+    audioCtx=new AC();
+  }catch(e){}
+}
+function beep(freq,dur,type,vol){
+  if(!audioCtx)return;
+  try{
+    var o=audioCtx.createOscillator();
+    var g=audioCtx.createGain();
+    o.type=type||'square';
+    o.frequency.value=freq;
+    g.gain.value=vol||0.05;
+    g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+    o.connect(g);g.connect(audioCtx.destination);
+    o.start();o.stop(audioCtx.currentTime+dur);
+  }catch(e){}
+}
+function sfxShoot(){beep(280,0.06,'square',0.04);}
+function sfxHit(){beep(150,0.08,'sawtooth',0.05);}
+function sfxKill(){beep(500,0.15,'triangle',0.06);}
+function sfxHurt(){beep(100,0.15,'sawtooth',0.08);}
+function sfxPickup(){beep(700,0.1,'sine',0.06);}
+function sfxWave(){beep(400,0.15,'sine',0.06);setTimeout(function(){beep(600,0.15,'sine',0.06);},150);}
+
+/* =========================================================
+   КАНВАС
+   ========================================================= */
+var cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+var W=0,H=0;
+function resize(){
+  var r=cv.getBoundingClientRect();
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=r.width*dpr;cv.height=r.height*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  W=r.width;H=r.height;
+}
+window.addEventListener('resize',resize);
+
+/* =========================================================
+   СОСТОЯНИЕ
+   ========================================================= */
+var player,targetX,targetY,enemies,bullets,particles,pickups,walls;
+var kills,wave,running,gameOver,shootCooldown,spawnTimer,waveTimer;
+var currentWeapon,weapons,gameStartTime,elapsedTime;
+var treeSprites,currentTarget;
+
+var WEAPONS={
+  pistol:{name:'Пистолет',damage:1,rate:14,spread:0.06,bulletSpeed:9,ammo:Infinity,maxAmmo:Infinity,reload:0,sfx:'pistol'},
+  rifle:{name:'Автомат',damage:1,rate:6,spread:0.13,bulletSpeed:11,ammo:30,maxAmmo:30,reload:60,sfx:'rifle'},
+  shotgun:{name:'Дробовик',damage:3,rate:30,spread:0.35,bulletSpeed:8,ammo:8,maxAmmo:8,reload:80,sfx:'shotgun',pellets:5}
+};
+
+function resetGame(){
+  player={x:W/2,y:H/2,r:13,hp:100,maxHp:100,speed:2.8};
+  targetX=player.x;targetY=player.y;
+  enemies=[];bullets=[];particles=[];pickups=[];walls=[];
+  kills=0;wave=1;gameOver=false;shootCooldown=0;spawnTimer=0;waveTimer=0;
+  gameStartTime=Date.now();elapsedTime=0;
+  currentWeapon='pistol';
+  weapons={
+    pistol:{ammo:Infinity,maxAmmo:Infinity},
+    rifle:{ammo:30,maxAmmo:30},
+    shotgun:{ammo:8,maxAmmo:8}
+  };
+  // Деревья (для карты)
+  treeSprites=[];
+  for(var i=0;i<8;i++){
+    treeSprites.push({
+      x:40+Math.random()*(W-80),
+      y:40+Math.random()*(H-80),
+      s:1+Math.random()*0.5
+    });
+  }
+  // Стены (укрытия)
+  for(var i=0;i<5;i++){
+    var wx=60+Math.random()*(W-180);
+    var wy=60+Math.random()*(H-140);
+    walls.push({x:wx,y:wy,w:60+Math.random()*50,h:40+Math.random()*40});
+  }
+  updateHud();
+  updateWeaponsUI();
+}
+function updateHud(){
+  document.getElementById('hpFill').style.width=(player.hp/player.maxHp*100)+'%';
+  document.getElementById('hpText').textContent=Math.ceil(player.hp)+' / '+player.maxHp;
+  document.getElementById('killsText').textContent=kills;
+  document.getElementById('waveText').textContent=wave;
+}
+function updateWeaponsUI(){
+  var w=weapons[currentWeapon];
+  var el=document.querySelectorAll('.wpn');
+  for(var i=0;i<el.length;i++){
+    el[i].classList.toggle('active',el[i].dataset.wpn===currentWeapon);
+  }
+  document.getElementById('amPistol').textContent='∞ / ∞';
+  document.getElementById('amRifle').textContent=weapons.rifle.ammo+' / '+weapons.rifle.maxAmmo;
+  document.getElementById('amShotgun').textContent=weapons.shotgun.ammo+' / '+weapons.shotgun.maxAmmo;
+}
+function switchWeapon(name){
+  if(!WEAPONS[name])return;
+  currentWeapon=name;
+  updateWeaponsUI();
+}
+document.querySelectorAll('.wpn').forEach(function(b){
+  b.addEventListener('click',function(){switchWeapon(b.dataset.wpn);});
+});
+
+/* =========================================================
+   ТАП УПРАВЛЕНИЕ
+   ========================================================= */
+cv.addEventListener('touchstart',function(e){
+  e.preventDefault();
+  if(!running||gameOver)return;
+  initAudio();
+  var t=e.changedTouches[0];
+  var r=cv.getBoundingClientRect();
+  targetX=t.clientX-r.left;
+  targetY=t.clientY-r.top;
+},{passive:false});
+cv.addEventListener('mousedown',function(e){
+  if(!running||gameOver)return;
+  initAudio();
+  var r=cv.getBoundingClientRect();
+  targetX=e.clientX-r.left;
+  targetY=e.clientY-r.top;
+});
+
+/* =========================================================
+   СТРЕЛЬБА
+   ========================================================= */
+function distToWall(x1,y1,x2,y2,wx,wy,ww,wh){
+  // Проверка, проходит ли луч через стену — упрощённо
+  return false;
+}
+function shootAt(tx,ty){
+  var w=WEAPONS[currentWeapon];
+  if(weapons[currentWeapon].ammo<=0){
+    // Перезарядка
+    return;
+  }
+  if(shootCooldown>0)return;
+  shootCooldown=w.rate;
+  var pellets=w.pellets||1;
+  var baseAngle=Math.atan2(ty-player.y,tx-player.x);
+  for(var p=0;p<pellets;p++){
+    var spread=(Math.random()-0.5)*w.spread*(pellets>1?2:1);
+    var a=baseAngle+spread;
+    bullets.push({
+      x:player.x+Math.cos(a)*16,
+      y:player.y+Math.sin(a)*16,
+      vx:Math.cos(a)*w.bulletSpeed,
+      vy:Math.sin(a)*w.bulletSpeed,
+      life:70,
+      damage:w.damage
+    });
+  }
+  if(weapons[currentWeapon].ammo!==Infinity){
+    weapons[currentWeapon].ammo--;
+    if(weapons[currentWeapon].ammo<=0){
+      setTimeout(function(){
+        weapons[currentWeapon].ammo=weapons[currentWeapon].maxAmmo;
+        updateWeaponsUI();
+      },w.reload*16);
+    }
+    updateWeaponsUI();
+  }
+  sfxShoot();
+}
+
+/* =========================================================
+   ВРАГИ
+   ========================================================= */
+function spawnEnemy(){
+  var side=Math.floor(Math.random()*4);
+  var x,y;
+  if(side===0){x=Math.random()*W;y=-20;}
+  else if(side===1){x=W+20;y=Math.random()*H;}
+  else if(side===2){x=Math.random()*W;y=H+20;}
+  else{x=-20;y=Math.random()*H;}
+  var hp=1+Math.floor(wave/3);
+  var isFast=Math.random()<0.2+wave*0.02;
+  enemies.push({
+    x:x,y:y,r:12,
+    hp:hp,maxHp:hp,
+    speed:(isFast?1.4:0.8)+wave*0.05,
+    hitFlash:0,
+    color:isFast?'#ff9500':'#c62828'
+  });
+}
+
+/* =========================================================
+   БОНУСЫ
+   ========================================================= */
+function spawnPickup(){
+  var x=40+Math.random()*(W-80);
+  var y=40+Math.random()*(H-80);
+  var type=Math.random()<0.5?'health':'ammo';
+  pickups.push({
+    x:x,y:y,r:14,type:type,
+    life:600,
+    bob:0
+  });
+}
+
+/* =========================================================
+   ОБНОВЛЕНИЕ
+   ========================================================= */
+function update(){
+  if(gameOver)return;
+  if(shootCooldown>0)shootCooldown--;
+  elapsedTime=Math.floor((Date.now()-gameStartTime)/1000);
+
+  // Движение игрока к цели
+  var dx=targetX-player.x,dy=targetY-player.y;
+  var dist=Math.sqrt(dx*dx+dy*dy);
+  if(dist>3){
+    player.x+=dx/dist*player.speed;
+    player.y+=dy/dist*player.speed;
+  }
+  player.x=Math.max(player.r,Math.min(W-player.r,player.x));
+  player.y=Math.max(player.r,Math.min(H-player.r,player.y));
+
+  // Авто-стрельба по ближайшему врагу
+  if(enemies.length>0&&shootCooldown<=0){
+    var nearest=null,nearestD=999999;
+    for(var i=0;i<enemies.length;i++){
+      var e=enemies[i];
+      var d2=(e.x-player.x)*(e.x-player.x)+(e.y-player.y)*(e.y-player.y);
+      if(d2<nearestD){nearestD=d2;nearest=e;}
+    }
+    if(nearest&&nearestD<250000){ // радиус ~500
+      shootAt(nearest.x,nearest.y);
+    }
+  }
+
+  // Пули
+  for(var i=bullets.length-1;i>=0;i--){
+    var b=bullets[i];
+    b.x+=b.vx;b.y+=b.vy;b.life--;
+    if(b.life<=0||b.x<-20||b.x>W+20||b.y<-20||b.y>H+20){
+      bullets.splice(i,1);continue;
+    }
+    // Проверка стен
+    var hitWall=false;
+    for(var w=0;w<walls.length;w++){
+      var wall=walls[w];
+      if(b.x>wall.x&&b.x<wall.x+wall.w&&b.y>wall.y&&b.y<wall.y+wall.h){
+        hitWall=true;break;
+      }
+    }
+    if(hitWall){
+      for(var k=0;k<3;k++){
+        particles.push({x:b.x,y:b.y,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,life:10,color:'#aaa'});
+      }
+      bullets.splice(i,1);continue;
+    }
+    // Проверка врагов
+    for(var j=enemies.length-1;j>=0;j--){
+      var e=enemies[j];
+      var ddx=e.x-b.x,ddy=e.y-b.y;
+      if(ddx*ddx+ddy*ddy<(e.r+3)*(e.r+3)){
+        e.hp-=b.damage;e.hitFlash=6;
+        sfxHit();
+        if(e.hp<=0){
+          kills++;updateHud();
+          sfxKill();
+          for(var k2=0;k2<8;k2++){
+            particles.push({
+              x:e.x,y:e.y,
+              vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,
+              life:20,color:'#ff5577'
+            });
+          }
+          enemies.splice(j,1);
+        }
+        bullets.splice(i,1);
+        break;
+      }
+    }
+  }
+
+  // Враги
+  for(var i=0;i<enemies.length;i++){
+    var e=enemies[i];
+    if(e.hitFlash>0)e.hitFlash--;
+    var dx2=player.x-e.x,dy2=player.y-e.y;
+    var d=Math.sqrt(dx2*dx2+dy2*dy2)||1;
+    var nx=e.x+dx2/d*e.speed;
+    var ny=e.y+dy2/d*e.speed;
+    // Стены
+    var blocked=false;
+    for(var w2=0;w2<walls.length;w2++){
+      var wall2=walls[w2];
+      if(nx>wall2.x-e.r&&nx<wall2.x+wall2.w+e.r&&ny>wall2.y-e.r&&ny<wall2.y+wall2.h+e.r){
+        blocked=true;break;
+      }
+    }
+    if(!blocked){e.x=nx;e.y=ny;}
+    if(d<e.r+player.r){
+      player.hp-=0.4;
+      sfxHurt();
+      if(player.hp<=0){player.hp=0;updateHud();die();return;}
+      updateHud();
+      e.x-=dx2/d*6;e.y-=dy2/d*6;
+    }
+  }
+
+  // Бонусы
+  for(var i=pickups.length-1;i>=0;i--){
+    var p=pickups[i];
+    p.life--;p.bob+=0.1;
+    if(p.life<=0){pickups.splice(i,1);continue;}
+    var pd=Math.sqrt((p.x-player.x)*(p.x-player.x)+(p.y-player.y)*(p.y-player.y));
+    if(pd<p.r+player.r){
+      if(p.type==='health'){
+        player.hp=Math.min(player.maxHp,player.hp+25);
+      } else {
+        if(weapons.rifle.ammo!==Infinity)weapons.rifle.ammo=weapons.rifle.maxAmmo;
+        if(weapons.shotgun.ammo!==Infinity)weapons.shotgun.ammo=weapons.shotgun.maxAmmo;
+        updateWeaponsUI();
+      }
+      sfxPickup();
+      for(var k3=0;k3<6;k3++){
+        particles.push({
+          x:p.x,y:p.y,
+          vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,
+          life:15,color:p.type==='health'?'#ff5577':'#ffcc44'
+        });
+      }
+      pickups.splice(i,1);
+    }
+  }
+
+  // Частицы
+  for(var i=particles.length-1;i>=0;i--){
+    var p2=particles[i];
+    p2.x+=p2.vx;p2.y+=p2.vy;p2.vx*=0.94;p2.vy*=0.94;p2.life--;
+    if(p2.life<=0)particles.splice(i,1);
+  }
+
+  // Спавн
+  spawnTimer++;
+  var spawnRate=Math.max(35,110-wave*7);
+  if(spawnTimer>=spawnRate){
+    spawnTimer=0;
+    spawnEnemy();
+    if(wave>=3&&Math.random()<0.4)spawnEnemy();
+  }
+  // Спавн бонусов
+  if(Math.random()<0.003&&pickups.length<3)spawnPickup();
+
+  waveTimer++;
+  if(waveTimer>=900){
+    waveTimer=0;wave++;
+    sfxWave();
+    player.hp=Math.min(player.maxHp,player.hp+15);
+    updateHud();
+  }
+  document.getElementById('timerText').textContent=Math.floor(elapsedTime/60)+':'+('0'+(elapsedTime%60)).slice(-2);
+}
+
+function die(){
+  gameOver=true;running=false;
+  document.getElementById('deadMsg').textContent='Убито: '+kills+' • Волна: '+wave+' • Время: '+Math.floor(elapsedTime/60)+':'+('0'+(elapsedTime%60)).slice(-2);
+  saveScore(kills,wave,elapsedTime);
+  renderRating('ratingList2');
+  document.getElementById('deadScreen').classList.add('on');
+}
+
+/* =========================================================
+   РИСОВАНИЕ
+   ========================================================= */
+function drawSprite(e,x,y,size,bodyColor,headColor,eyeColor){
+  // Тело
+  ctx.fillStyle=bodyColor;
+  ctx.fillRect(x-size/2,y-size/2,size,size*0.6);
+  // Голова
+  ctx.fillStyle=headColor;
+  ctx.beginPath();
+  ctx.arc(x,y-size*0.35,size*0.28,0,Math.PI*2);
+  ctx.fill();
+  // Глаза
+  ctx.fillStyle=eyeColor||'#000';
+  ctx.fillRect(x-size*0.15,y-size*0.4,2,2);
+  ctx.fillRect(x+size*0.08,y-size*0.4,2,2);
+  // Ноги
+  ctx.fillStyle='#333';
+  ctx.fillRect(x-size/2,y+size*0.1,size*0.3,size*0.35);
+  ctx.fillRect(x+size*0.2,y+size*0.1,size*0.3,size*0.35);
+}
+
+function draw(){
+  // Трава — фон
+  ctx.fillStyle='#2d4a2d';
+  ctx.fillRect(0,0,W,H);
+
+  // Текстура травы (точки)
+  ctx.fillStyle='rgba(60,90,60,.4)';
+  for(var x=0;x<W;x+=24){
+    for(var y=0;y<H;y+=24){
+      var seed=(x*13+y*7)%17;
+      if(seed<5){
+        ctx.fillRect(x+seed,y+3,2,3);
+      }
+    }
+  }
+
+  // Деревья (под игроком)
+  for(var i=0;i<treeSprites.length;i++){
+    var t=treeSprites[i];
+    ctx.globalAlpha=0.85;
+    // Тень
+    ctx.fillStyle='rgba(0,0,0,.2)';
+    ctx.beginPath();ctx.ellipse(t.x,t.y+20,22*t.s,8*t.s,0,0,Math.PI*2);ctx.fill();
+    // Ствол
+    ctx.fillStyle='#5a3a1a';
+    ctx.fillRect(t.x-4*t.s,t.y-10*t.s,8*t.s,30*t.s);
+    // Крона
+    ctx.fillStyle='#1f4d1f';
+    ctx.beginPath();ctx.arc(t.x,t.y-20*t.s,20*t.s,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#2d6b2d';
+    ctx.beginPath();ctx.arc(t.x-6*t.s,t.y-24*t.s,14*t.s,0,Math.PI*2);ctx.fill();
+    ctx.globalAlpha=1;
+  }
+
+  // Стены
+  for(var i=0;i<walls.length;i++){
+    var w=walls[i];
+    ctx.fillStyle='#6b6b6b';
+    ctx.fillRect(w.x,w.y,w.w,w.h);
+    ctx.fillStyle='#8a8a8a';
+    ctx.fillRect(w.x,w.y,w.w,6);
+    ctx.fillStyle='#4a4a4a';
+    ctx.fillRect(w.x,w.y+w.h-6,w.w,6);
+    // Кирпичи
+    ctx.strokeStyle='rgba(0,0,0,.3)';ctx.lineWidth=1;
+    for(var yy=w.y+12;yy<w.y+w.h;yy+=12){
+      ctx.beginPath();ctx.moveTo(w.x,yy);ctx.lineTo(w.x+w.w,yy);ctx.stroke();
+    }
+  }
+
+  // Частицы
+  for(var i=0;i<particles.length;i++){
+    var p=particles[i];
+    ctx.globalAlpha=p.life/20;
+    ctx.fillStyle=p.color;
+    ctx.fillRect(p.x-2,p.y-2,4,4);
+  }
+  ctx.globalAlpha=1;
+
+  // Бонусы
+  for(var i=0;i<pickups.length;i++){
+    var p=pickups[i];
+    var bobY=Math.sin(p.bob)*3;
+    // тень
+    ctx.fillStyle='rgba(0,0,0,.3)';
+    ctx.beginPath();ctx.ellipse(p.x,p.y+14,12,5,0,0,Math.PI*2);ctx.fill();
+    // сам бонус
+    if(p.type==='health'){
+      ctx.fillStyle='#ff5577';
+      ctx.fillRect(p.x-10,p.y-10+bobY,20,20);
+      ctx.fillStyle='#fff';
+      ctx.fillRect(p.x-2,p.y-7+bobY,4,14);
+      ctx.fillRect(p.x-7,p.y-2+bobY,14,4);
+    } else {
+      ctx.fillStyle='#ffcc44';
+      ctx.fillRect(p.x-10,p.y-10+bobY,20,20);
+      ctx.fillStyle='#8a6b1a';
+      ctx.fillRect(p.x-4,p.y-6+bobY,8,12);
+    }
+  }
+
+  // Враги — спрайты человечков
+  for(var i=0;i<enemies.length;i++){
+    var e=enemies[i];
+    // тень
+    ctx.fillStyle='rgba(0,0,0,.3)';
+    ctx.beginPath();ctx.ellipse(e.x,e.y+10,11,4,0,0,Math.PI*2);ctx.fill();
+    if(e.hitFlash>0){
+      ctx.fillStyle='#fff';
+      ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,Math.PI*2);ctx.fill();
+    } else {
+      drawSprite(e,e.x,e.y,e.r*1.8,e.color,'#ffcdb0','#fff');
+    }
+    // HP bar
+    if(e.hp<e.maxHp){
+      ctx.fillStyle='rgba(0,0,0,.5)';ctx.fillRect(e.x-14,e.y-e.r-10,28,4);
+      ctx.fillStyle='#7dffc4';ctx.fillRect(e.x-14,e.y-e.r-10,28*(e.hp/e.maxHp),4);
+    }
+  }
+
+  // Пули
+  ctx.fillStyle='#ffcc44';
+  for(var i=0;i<bullets.length;i++){
+    var b=bullets[i];
+    ctx.beginPath();ctx.arc(b.x,b.y,2.5,0,Math.PI*2);ctx.fill();
+    ctx.globalAlpha=0.4;
+    ctx.beginPath();ctx.arc(b.x-b.vx*0.8,b.y-b.vy*0.8,2,0,Math.PI*2);ctx.fill();
+    ctx.globalAlpha=1;
+  }
+
+  // Игрок — спрайт
+  ctx.fillStyle='rgba(0,0,0,.3)';
+  ctx.beginPath();ctx.ellipse(player.x,player.y+11,12,4.5,0,0,Math.PI*2);ctx.fill();
+  drawSprite(player,player.x,player.y,player.r*1.9,'#2c5a8c','#f4c69a','#000');
+  // Пушка
+  var angle=Math.atan2(targetY-player.y,targetX-player.x);
+  if(!isNaN(angle)){
+    ctx.save();
+    ctx.translate(player.x,player.y);
+    ctx.rotate(angle);
+    ctx.fillStyle='#444';
+    ctx.fillRect(6,-3,14,6);
+    ctx.restore();
+  }
+
+  // Прицел (точка цели)
+  if(running&&!gameOver){
+    ctx.strokeStyle='rgba(125,255,196,.7)';
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(targetX,targetY,10,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.arc(targetX,targetY,3,0,Math.PI*2);ctx.stroke();
+  }
+}
+
+function loop(){
+  if(!running){draw();return;}
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+/* =========================================================
+   РЕЙТИНГ (localStorage)
+   ========================================================= */
+var RATING_KEY='lolkek_strike_rating_v1';
+function loadRating(){
+  try{
+    var s=localStorage.getItem(RATING_KEY);
+    return s?JSON.parse(s):[];
+  }catch(e){return[];}
+}
+function saveScore(k,w,t){
+  var r=loadRating();
+  var name='Игрок';
+  try{
+    var saved=localStorage.getItem('lolkek_player_name');
+    if(saved)name=saved;
+    else{
+      name=prompt('Введи имя для рейтинга:','Игрок')||'Игрок';
+      localStorage.setItem('lolkek_player_name',name);
+    }
+  }catch(e){}
+  r.push({name:name,kills:k,wave:w,time:t,date:new Date().toISOString()});
+  r.sort(function(a,b){return b.kills-a.kills;});
+  r=r.slice(0,10);
+  try{localStorage.setItem(RATING_KEY,JSON.stringify(r));}catch(e){}
+}
+function renderRating(elId){
+  var el=document.getElementById(elId);
+  if(!el)return;
+  var r=loadRating();
+  el.innerHTML='';
+  if(!r.length){el.innerHTML='<div class="rating-empty">Пока никто не играл</div>';return;}
+  r.forEach(function(row,i){
+    var d=document.createElement('div');d.className='rating-row';
+    d.innerHTML='<span class="rank">'+(i+1)+'.</span><span class="name">'+row.name+'</span><span class="score">'+row.kills+' 💀</span>';
+    el.appendChild(d);
+  });
+}
+function clearRating(){
+  if(confirm('Очистить весь рейтинг?')){
+    try{localStorage.removeItem(RATING_KEY);}catch(e){}
+    renderRating('ratingList');
+  }
+}
+
+/* =========================================================
+   СТАРТ / РЕСТАРТ
+   ========================================================= */
+function startGame(){
+  initAudio();
+  document.getElementById('startScreen').classList.remove('on');
+  document.getElementById('deadScreen').classList.remove('on');
+  resize();
+  resetGame();
+  running=true;
+  loop();
+}
+function restartGame(){
+  initAudio();
+  document.getElementById('deadScreen').classList.remove('on');
+  document.getElementById('startScreen').classList.remove('on');
+  resize();
+  resetGame();
+  running=true;
+  loop();
+}
+
+/* =========================================================
+   КЛАВИАТУРА (ПК)
+   ========================================================= */
+var keys={};
+document.addEventListener('keydown',function(e){
+  var k=e.key.toLowerCase();keys[k]=true;
+  if(k==='1')switchWeapon('pistol');
+  if(k==='2')switchWeapon('rifle');
+  if(k==='3')switchWeapon('shotgun');
+});
+document.addEventListener('keyup',function(e){
+  keys[e.key.toLowerCase()]=false;
+});
+setInterval(function(){
+  if(!running||gameOver)return;
+  var dx=0,dy=0;
+  if(keys['w']||keys['arrowup'])dy-=1;
+  if(keys['s']||keys['arrowdown'])dy+=1;
+  if(keys['a']||keys['arrowleft'])dx-=1;
+  if(keys['d']||keys['arrowright'])dx+=1;
+  if(dx||dy){
+    targetX=player.x+dx*100;
+    targetY=player.y+dy*100;
+  }
+},60);
+
+/* =========================================================
+   СТАРТ
+   ========================================================= */
+resize();
+resetGame();
+renderRating('ratingList');
+draw();
+</script>
+</body>
+</html>
