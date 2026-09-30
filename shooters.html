@@ -2,31 +2,30 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0a0e17">
 <title>Стрелялки — Сайт lolkek</title>
 <link rel="stylesheet" href="notes.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-gradient(circle at 20% 10%,#2a1b1b,#0a0e17 70%);background-attachment:fixed;color:#e8eefc;padding:12px 10px 40px;min-height:100vh;-webkit-user-select:none;user-select:none;overflow-x:hidden;font-size:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;background:radial-gradient(circle at 20% 10%,#2a1b1b,#0a0e17 70%);background-attachment:fixed;color:#e8eefc;padding:14px 12px 40px;min-height:100vh;font-size:14px;overflow-x:hidden}
 #a{max-width:520px;margin:0 auto}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}
 .topbar h1{font-size:18px;font-weight:800;color:#ff8fa8}
-.btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:#e8eefc;padding:8px 12px;border-radius:9px;font-family:inherit;font-size:12px;font-weight:600;min-height:34px;cursor:pointer;-webkit-appearance:none;appearance:none;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-.btn:active{background:rgba(255,255,255,.22)}
-
-/* МЕНЮ */
+.btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:#e8eefc;padding:9px 14px;border-radius:9px;font-family:inherit;font-size:13px;font-weight:600;min-height:38px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;transition:.15s}
+.btn:hover{background:rgba(255,255,255,.16)}
 .menu{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:20px}
-.card{display:flex;align-items:center;gap:14px;padding:18px 16px;border:1px solid rgba(255,143,168,.25);border-radius:16px;background:linear-gradient(160deg,rgba(255,80,80,.08),rgba(255,255,255,.02));color:#e8eefc;font-family:inherit;text-decoration:none;position:relative;overflow:hidden;-webkit-appearance:none;appearance:none;cursor:pointer}
-.card:active{transform:scale(.97);border-color:#ff8fa8}
+.card{display:flex;align-items:center;gap:14px;padding:18px 16px;border:1px solid rgba(255,143,168,.25);border-radius:16px;background:linear-gradient(160deg,rgba(255,80,80,.08),rgba(255,255,255,.02));color:#e8eefc;font-family:inherit;text-decoration:none;cursor:pointer;transition:.15s}
+.card:hover{transform:translateY(-2px);border-color:#ff8fa8;box-shadow:0 10px 24px rgba(255,80,80,.2)}
+.card:active{transform:scale(.97)}
 .card .ico{font-size:38px;flex-shrink:0}
 .card .txt{flex:1;text-align:left}
 .card .name{font-size:16px;font-weight:800;display:block;color:#ff8fa8}
-.card .desc{font-size:11px;color:#8b9ac0;display:block;margin-top:3px}
+.card .desc{font-size:12px;color:#8b9ac0;display:block;margin-top:3px}
 .card .arrow{color:#6ea8ff;font-size:20px;flex-shrink:0}
 .card.soon{opacity:.6;cursor:default}
-.badge{background:#f9a825;color:#000;font-size:10px;font-weight:900;padding:3px 9px;border-radius:9px;letter-spacing:.5px}
+.card.soon:hover{transform:none;border-color:rgba(255,143,168,.25);box-shadow:none}
+.badge{background:#f9a825;color:#000;font-size:10px;font-weight:900;padding:4px 10px;border-radius:9px;letter-spacing:.5px}
 </style>
 </head>
 <body>
@@ -57,7 +56,6 @@ body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-grad
   </div>
 </div>
 
-<!-- ЗАМЕТКИ -->
 <div class="notes-section">
   <div class="notes-header">
     <h2>📌 Заметки от админа</h2>
@@ -68,7 +66,6 @@ body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-grad
 
 </div>
 
-<!-- МОДАЛКА ЗАМЕТОК -->
 <div class="notes-modal" id="notesModal">
   <div class="notes-modal-box">
     <h3>🔐 Заметки админа</h3>
