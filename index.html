@@ -2,32 +2,33 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0a0e17">
 <title>Сайт lolkek</title>
 <link rel="stylesheet" href="notes.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-gradient(circle at 20% 10%,#1b2a4a,#0a0e17 70%);background-attachment:fixed;color:#e8eefc;padding:14px 12px 40px;min-height:100vh;-webkit-user-select:none;user-select:none;overflow-x:hidden;font-size:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;background:radial-gradient(circle at 20% 10%,#1b2a4a,#0a0e17 70%);background-attachment:fixed;color:#e8eefc;padding:14px 12px 40px;min-height:100vh;font-size:14px;line-height:1.4;overflow-x:hidden}
 #a{max-width:520px;margin:0 auto}
 .hero{text-align:center;padding:6px 0 16px}
-.hero h1{font-size:28px;font-weight:900;letter-spacing:-1px;background:linear-gradient(90deg,#7dffc4,#6ea8ff,#c78bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#7dffc4}
-.hero .sub{color:#9fb0d4;font-size:12px;line-height:1.5;margin-top:8px}
-.hero .tg{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:18px;background:rgba(0,136,204,.2);border:1px solid rgba(110,168,255,.4);color:#6ea8ff;font-weight:700;font-size:12px;text-decoration:none}
+.hero h1{font-size:28px;font-weight:900;letter-spacing:-1px;background:linear-gradient(90deg,#7dffc4,#6ea8ff,#c78bff);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;color:#7dffc4}
+.hero .sub{color:#9fb0d4;font-size:13px;line-height:1.5;margin-top:8px}
+.hero .tg{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:18px;background:rgba(0,136,204,.2);border:1px solid rgba(110,168,255,.4);color:#6ea8ff;font-weight:700;font-size:13px;text-decoration:none;transition:.2s}
+.hero .tg:hover{background:rgba(0,136,204,.35)}
 .section-title{font-size:14px;font-weight:800;color:#7dffc4;margin:22px 0 10px;letter-spacing:.5px}
 .menu{display:grid;grid-template-columns:1fr;gap:12px}
-.card{display:flex;align-items:center;gap:14px;padding:18px 16px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));color:#e8eefc;font-family:inherit;text-decoration:none;transition:.15s}
-.card:active{transform:scale(.97);border-color:#6ea8ff}
-.card .ico{font-size:34px;flex-shrink:0}
+.card{display:flex;align-items:center;gap:14px;padding:18px 16px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));color:#e8eefc;font-family:inherit;text-decoration:none;transition:.15s;cursor:pointer}
+.card:hover{transform:translateY(-2px);border-color:#6ea8ff;box-shadow:0 10px 24px rgba(80,140,255,.2)}
+.card:active{transform:scale(.97)}
+.card .ico{font-size:36px;flex-shrink:0}
 .card .txt{flex:1;text-align:left}
-.card .name{font-size:15px;font-weight:800;display:block}
-.card .desc{font-size:11px;color:#8b9ac0;display:block;margin-top:2px}
-.card .arrow{color:#6ea8ff;font-size:18px;flex-shrink:0}
+.card .name{font-size:16px;font-weight:800;display:block}
+.card .desc{font-size:12px;color:#8b9ac0;display:block;margin-top:3px}
+.card .arrow{color:#6ea8ff;font-size:20px;flex-shrink:0}
 .card.games{border-color:rgba(110,168,255,.35)}
 .card.mc{border-color:rgba(125,255,196,.35)}
 .card.shoot{border-color:rgba(255,143,168,.35)}
-.footer{text-align:center;margin-top:28px;padding-top:16px;border-top:1px solid rgba(255,255,255,.07);color:#5d6a86;font-size:11px;line-height:1.7}
+.footer{text-align:center;margin-top:28px;padding-top:16px;border-top:1px solid rgba(255,255,255,.07);color:#5d6a86;font-size:12px;line-height:1.7}
 .footer a{color:#6ea8ff;text-decoration:none}
 </style>
 </head>
@@ -40,7 +41,6 @@ body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-grad
   <a class="tg" href="https://t.me/lolkek_tgk" target="_blank" rel="noopener">✈️ @lolkek_tgk</a>
 </header>
 
-<!-- ЗАМЕТКИ -->
 <div class="notes-section">
   <div class="notes-header">
     <h2>📌 Заметки от админа</h2>
@@ -75,7 +75,6 @@ body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-grad
 
 </div>
 
-<!-- БЛОК ЗАМЕТОК -->
 <div class="notes-modal" id="notesModal">
   <div class="notes-modal-box">
     <h3>🔐 Заметки админа</h3>
@@ -88,9 +87,7 @@ body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:radial-grad
       <input type="text" id="noteTitleInput" placeholder="Например: Новость">
       <label class="notes-label">Текст заметки</label>
       <textarea id="noteTextInput" placeholder="Текст..."></textarea>
-      <div class="notes-modal-btns">
-        <button class="notes-btn" id="notesAddBtn" style="width:100%">➕ Добавить</button>
-      </div>
+      <div class="notes-modal-btns"><button class="notes-btn" id="notesAddBtn" style="width:100%">➕ Добавить</button></div>
     </div>
     <div class="notes-msg" id="notesMsg"></div>
     <div class="notes-modal-btns"><button class="notes-btn" id="notesCloseBtn" style="width:100%">Закрыть</button></div>
