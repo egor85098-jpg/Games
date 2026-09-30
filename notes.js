@@ -1,22 +1,74 @@
-.notes-section{margin:12px 0 16px}
-.notes-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.notes-header h2{font-size:14px;font-weight:800;color:#7dffc4}
-.notes-lock{background:none;border:none;color:#ffd479;font-size:18px;padding:4px 8px;cursor:pointer;-webkit-appearance:none;appearance:none}
-.notes-empty{text-align:center;color:#5d6a86;font-size:13px;padding:16px 10px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.1);border-radius:12px}
-.note-card{background:linear-gradient(135deg,rgba(255,212,121,.08),rgba(255,212,121,.02));border:1px solid rgba(255,212,121,.25);border-radius:12px;padding:12px 14px;margin-bottom:10px;color:#ffe8b0;font-size:13px;line-height:1.5}
-.note-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
-.note-title{font-weight:800;color:#ffd479;font-size:13px;word-break:break-word}
-.note-del{background:rgba(255,80,80,.15);border:1px solid rgba(255,80,80,.3);color:#ff8080;border-radius:6px;font-size:12px;padding:2px 6px;cursor:pointer;flex-shrink:0}
-.note-text{white-space:pre-wrap;word-wrap:break-word}
-.note-date{margin-top:6px;font-size:10px;color:#b39c6a;text-align:right}
-.notes-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:1000;align-items:center;justify-content:center;padding:16px}
-.notes-modal.on{display:flex}
-.notes-modal-box{background:#141d33;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:16px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.notes-modal-box h3{font-size:16px;margin-bottom:10px;color:#7dffc4}
-.notes-modal-box input,.notes-modal-box textarea{width:100%;padding:10px;margin-bottom:8px;background:#0a0e17;color:#e8eefc;border:1px solid rgba(255,255,255,.15);border-radius:9px;font-family:inherit;font-size:13px;-webkit-appearance:none;appearance:none}
-.notes-modal-box textarea{min-height:100px;line-height:1.5;resize:vertical}
-.notes-modal-btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.notes-btn{flex:1;min-width:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:#e8eefc;padding:10px 12px;border-radius:9px;font-family:inherit;font-size:12px;font-weight:600;min-height:38px;cursor:pointer;-webkit-appearance:none;appearance:none}
-.notes-btn:active{background:rgba(255,255,255,.22)}
-.notes-msg{font-size:11px;color:#8b9ac0;margin-top:8px;line-height:1.5;min-height:16px}
-.notes-label{display:block;font-size:11px;color:#9fb0d4;margin-bottom:4px;margin-top:4px}
+(function(){
+  'use strict';
+  var PASSWORD='lolkek2024';
+  var NOTES_KEY='lolkek_notes_v3';
+  var DEFAULT_NOTES=[{id:1,title:'📌 Добро пожаловать!',text:'Это сайт lolkek — играй на информатике и переменах!\nСкоро: Standoff 2D.\n\nПодписывайся: @lolkek_tgk',date:'2024-01-01'}];
+  function loadNotes(){
+    try{
+      var s=localStorage.getItem(NOTES_KEY);
+      if(s){var a=JSON.parse(s);if(Array.isArray(a))return a;}
+    }catch(e){}
+    return DEFAULT_NOTES.slice();
+  }
+  function saveNotes(n){try{localStorage.setItem(NOTES_KEY,JSON.stringify(n));}catch(e){}}
+  var notes=loadNotes();
+  var isAdmin=false;
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function fmtDate(d){if(!d)return'';try{return new Date(d).toLocaleDateString('ru-RU',{day:'numeric',month:'short'});}catch(e){return d;}}
+  function render(){
+    var el=document.getElementById('notesList');if(!el)return;
+    el.innerHTML='';
+    if(!notes.length){el.innerHTML='<div class="notes-empty">Пока нет заметок</div>';return;}
+    var sorted=notes.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
+    sorted.forEach(function(n){
+      var card=document.createElement('div');card.className='note-card';
+      var head=document.createElement('div');head.className='note-head';
+      var title=document.createElement('div');title.className='note-title';title.innerHTML=esc(n.title||'Заметка');
+      head.appendChild(title);
+      if(isAdmin){
+        var del=document.createElement('button');del.className='note-del';del.textContent='🗑';
+        del.onclick=function(){if(confirm('Удалить?')){notes=notes.filter(function(x){return x.id!==n.id;});saveNotes(notes);render();}};
+        head.appendChild(del);
+      }
+      card.appendChild(head);
+      var text=document.createElement('div');text.className='note-text';text.textContent=n.text||'';
+      card.appendChild(text);
+      if(n.date){var dt=document.createElement('div');dt.className='note-date';dt.textContent=fmtDate(n.date);card.appendChild(dt);}
+      el.appendChild(card);
+    });
+  }
+  function openModal(){var m=document.getElementById('notesModal');if(m)m.classList.add('on');}
+  function closeModal(){var m=document.getElementById('notesModal');if(m)m.classList.remove('on');}
+  function login(){
+    if(document.getElementById('notesPwd').value!==PASSWORD){
+      document.getElementById('notesMsg').textContent='❌ Неверный пароль';return;
+    }
+    isAdmin=true;
+    document.getElementById('notesPwdArea').style.display='none';
+    document.getElementById('notesAdminArea').style.display='block';
+    document.getElementById('notesMsg').textContent='✅ Режим админа';
+    render();
+  }
+  function addNote(){
+    var t=document.getElementById('noteTitleInput').value.trim();
+    var x=document.getElementById('noteTextInput').value.trim();
+    if(!x){document.getElementById('notesMsg').textContent='❌ Введи текст';return;}
+    notes.push({id:Date.now(),title:t||'Заметка',text:x,date:new Date().toISOString().split('T')[0]});
+    saveNotes(notes);
+    document.getElementById('noteTitleInput').value='';
+    document.getElementById('noteTextInput').value='';
+    document.getElementById('notesMsg').textContent='✅ Добавлено!';
+    render();
+  }
+  function init(){
+    render();
+    var lb=document.getElementById('notesLock');if(lb)lb.onclick=openModal;
+    var li=document.getElementById('notesLoginBtn');if(li)li.onclick=login;
+    var cl=document.getElementById('notesCloseBtn');if(cl)cl.onclick=closeModal;
+    var ad=document.getElementById('notesAddBtn');if(ad)ad.onclick=addNote;
+    var pw=document.getElementById('notesPwd');
+    if(pw)pw.addEventListener('keydown',function(e){if(e.key==='Enter')login();});
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}
+  else{init();}
+})();
